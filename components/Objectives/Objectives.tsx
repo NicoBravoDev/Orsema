@@ -7,6 +7,7 @@ import { ObjectiveItem, ActivityItem } from '../types/types';
 import { useTheme } from '../ThemeContext';
 import { createStyles } from './Objectives.styles';
 import { ScoreCalculator } from '../../utils/ScoreCalculator'; // Importar el calculador
+import { useTranslation } from 'react-i18next'; // Importar hook de traducción
 
 interface ObjectivesProps {
   objectives: ObjectiveItem[];
@@ -33,6 +34,7 @@ const Objectives: React.FC<ObjectivesProps> = ({
 }) => {
   const { isDarkMode, colors } = useTheme();
   const styles = createStyles(colors);
+  const { t } = useTranslation(); // Hook para traducciones
 
   // Función mejorada para manejar el toggle de objetivos usando ScoreCalculator
   // y actualizando automáticamente la actividad asociada
@@ -122,13 +124,13 @@ const Objectives: React.FC<ObjectivesProps> = ({
   return (
     <View style={styles.card}>
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Objetivos</Text>
+        <Text style={styles.sectionTitle}>{t('objectives.title')}</Text>
         <TouchableOpacity 
           style={styles.addButton} 
           onPress={() => setShowObjectiveModal(true)}
         >
           <Ionicons name="add-circle-outline" size={16} color="#FFFFFF" />
-          <Text style={styles.addButtonText}>Añadir</Text>
+          <Text style={styles.addButtonText}>{t('objectives.addObjective')}</Text>
         </TouchableOpacity>
       </View>
       
@@ -136,7 +138,7 @@ const Objectives: React.FC<ObjectivesProps> = ({
         <View style={styles.emptyStateContainer}>
           <Ionicons name="flag-outline" size={48} color={colors.textSecondary} />
           <Text style={styles.emptyStateText}>
-            No tienes objetivos establecidos. Define objetivos claros para medir tu progreso.
+            {t('objectives.emptyState')}
           </Text>
         </View>
       ) : (
@@ -172,7 +174,7 @@ const Objectives: React.FC<ObjectivesProps> = ({
                 </TouchableOpacity>
               </View>
               <View style={styles.objectiveAssociation}>
-                <Text style={styles.objectiveAssociationLabel}>Actividad:</Text>
+                <Text style={styles.objectiveAssociationLabel}>{t('objectives.activity')}</Text>
                 <View style={styles.pickerContainer}>
                   <Picker
                     selectedValue={obj.activityId ? obj.activityId.toString() : ''}
@@ -180,7 +182,7 @@ const Objectives: React.FC<ObjectivesProps> = ({
                     dropdownIconColor={colors.text}
                     onValueChange={(value) => handleActivityChange(obj.id, value)}
                   >
-                    <Picker.Item label="Sin asignar" value="" color={isDarkMode ? '#ffffff' : '#000000'} />
+                    <Picker.Item label={t('objectives.unassigned')} value="" color={isDarkMode ? '#ffffff' : '#000000'} />
                     {activities.map(act => (
                       <Picker.Item 
                         key={act.id} 
@@ -197,14 +199,17 @@ const Objectives: React.FC<ObjectivesProps> = ({
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <FontAwesome5 name="link" size={12} color={colors.primary} style={{ marginRight: 8 }} />
                   <Text style={styles.associatedActivityText}>
-                    Asociado a: {associatedActivity.name}
+                    {t('objectives.linkedTo')} {associatedActivity.name}
                   </Text>
                   <Text style={{
                     marginLeft: 8,
                     color: associatedActivity.activityDone ? colors.success : colors.textSecondary,
                     fontSize: 12
                   }}>
-                    {associatedActivity.activityDone ? "(Completada)" : "(Pendiente)"}
+                    {associatedActivity.activityDone ? 
+                      `(${t('additionalItems.completed')})` : 
+                      `(${t('additionalItems.pending')})`
+                    }
                   </Text>
                 </View>
               )}
@@ -221,7 +226,7 @@ const Objectives: React.FC<ObjectivesProps> = ({
                   color="#FFFFFF" 
                 />
                 <Text style={styles.objectiveStatusText}>
-                  {obj.completed ? "Completado" : "Pendiente"}
+                  {obj.completed ? t('objectives.completed') : t('objectives.pending')}
                 </Text>
               </View>
             </View>

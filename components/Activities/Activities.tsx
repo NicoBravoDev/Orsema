@@ -6,6 +6,7 @@ import { ActivityItem, ObjectiveItem } from '../types/types';
 import { useTheme } from '../ThemeContext';
 import { createStyles } from './Activities.styles';
 import { ScoreCalculator } from '../../utils/ScoreCalculator'; // Importar el calculador desde la carpeta utils
+import { useTranslation } from 'react-i18next'; // Importar hook de traducción
 
 interface ActivitiesProps {
   activities: ActivityItem[];
@@ -28,6 +29,7 @@ const Activities: React.FC<ActivitiesProps> = ({
 }) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const { t } = useTranslation(); // Hook para traducciones
 
   // Función que utiliza el ScoreCalculator para actualizar actividades
   const handleActivityToggle = (activity: ActivityItem, newValue: boolean) => {
@@ -58,13 +60,13 @@ const Activities: React.FC<ActivitiesProps> = ({
   return (
     <View style={styles.card}>
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Actividades</Text>
+        <Text style={styles.sectionTitle}>{t('activities.title')}</Text>
         <TouchableOpacity 
           style={styles.addButton} 
           onPress={() => setShowActivityModal(true)}
         >
           <Ionicons name="add-circle-outline" size={16} color="#FFFFFF" />
-          <Text style={styles.addButtonText}>Añadir</Text>
+          <Text style={styles.addButtonText}>{t('activities.addActivity')}</Text>
         </TouchableOpacity>
       </View>
       
@@ -72,17 +74,17 @@ const Activities: React.FC<ActivitiesProps> = ({
         <View style={styles.emptyStateContainer}>
           <Ionicons name="list-outline" size={48} color={colors.textSecondary} />
           <Text style={styles.emptyStateText}>
-            No tienes actividades. Añade una para comenzar a hacer seguimiento.
+            {t('activities.emptyState')}
           </Text>
         </View>
       ) : (
         <>
           {/* Encabezados de la tabla de actividades */}
           <View style={styles.tableHeader}>
-            <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Actividad</Text>
-            <Text style={styles.tableHeaderCell}>Hecho</Text>
-            <Text style={styles.tableHeaderCell}>Factor X</Text>
-            <Text style={styles.tableHeaderCell}>Puntos</Text>
+            <Text style={[styles.tableHeaderCell, { flex: 2 }]}>{t('activities.activity')}</Text>
+            <Text style={styles.tableHeaderCell}>{t('activities.done')}</Text>
+            <Text style={styles.tableHeaderCell}>{t('activities.factor')}</Text>
+            <Text style={styles.tableHeaderCell}>{t('activities.points')}</Text>
             <Text style={{ width: 36 }}></Text>
           </View>
           

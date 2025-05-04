@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { NewObjectiveState, ActivityItem } from '../types/types';
 import { useTheme } from '../ThemeContext';
 import { createStyles } from './Modals.styles';
+import { useTranslation } from 'react-i18next'; // Importar hook de traducción
 
 interface ObjectiveModalProps {
   showModal: boolean;
@@ -26,6 +27,7 @@ const ObjectiveModal: React.FC<ObjectiveModalProps> = ({
 }) => {
   const { isDarkMode, colors } = useTheme();
   const styles = createStyles(colors);
+  const { t } = useTranslation(); // Hook para traducciones
 
   return (
     <Modal
@@ -42,10 +44,10 @@ const ObjectiveModal: React.FC<ObjectiveModalProps> = ({
               color={colors.primary} 
               style={styles.modalIcon} 
             />
-            <Text style={styles.modalTitle}>Añadir Nuevo Objetivo</Text>
+            <Text style={styles.modalTitle}>{t('modals.objective.title')}</Text>
           </View>
           
-          <Text style={styles.modalLabel}>Descripción</Text>
+          <Text style={styles.modalLabel}>{t('modals.objective.text')}</Text>
           <TextInput
             style={styles.modalInput}
             value={newObjective.text}
@@ -54,7 +56,7 @@ const ObjectiveModal: React.FC<ObjectiveModalProps> = ({
             placeholderTextColor={colors.textSecondary}
           />
           
-          <Text style={styles.modalLabel}>Actividad</Text>
+          <Text style={styles.modalLabel}>{t('modals.objective.activity')}</Text>
           <View style={styles.pickerContainer}>
             <Picker
               selectedValue={newObjective.activityId}
@@ -62,7 +64,7 @@ const ObjectiveModal: React.FC<ObjectiveModalProps> = ({
               dropdownIconColor={colors.text}
               onValueChange={(value: string) => setNewObjective({...newObjective, activityId: value})}
             >
-              <Picker.Item label="Sin relacionar" value="" color={isDarkMode ? '#ffffff' : '#000000'} />
+              <Picker.Item label={t('objectives.unassigned')} value="" color={isDarkMode ? '#ffffff' : '#000000'} />
               {activities.map(activity => (
                 <Picker.Item 
                   key={activity.id} 
@@ -79,13 +81,13 @@ const ObjectiveModal: React.FC<ObjectiveModalProps> = ({
               style={styles.modalCancelButton}
               onPress={() => setShowModal(false)}
             >
-              <Text style={styles.modalCancelButtonText}>Cancelar</Text>
+              <Text style={styles.modalCancelButtonText}>{t('modals.objective.cancel')}</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.modalConfirmButton}
               onPress={handleAddObjective}
             >
-              <Text style={styles.modalConfirmButtonText}>Añadir</Text>
+              <Text style={styles.modalConfirmButtonText}>{t('modals.objective.add')}</Text>
             </TouchableOpacity>
           </View>
         </View>

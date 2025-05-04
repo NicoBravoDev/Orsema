@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { NewActivityState } from '../types/types';
 import { useTheme } from '../ThemeContext';
 import { createStyles } from './Modals.styles';
+import { useTranslation } from 'react-i18next'; // Importar hook de traducción
 
 interface ActivityModalProps {
   showModal: boolean;
@@ -23,6 +24,7 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
 }) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const { t } = useTranslation(); // Hook para traducciones
 
   return (
     <Modal
@@ -34,15 +36,15 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <Ionicons 
-              name="fitness-outline" 
-              size={24} 
-              color={colors.primary} 
+              name="fitness-outline"
+              size={24}
+              color={colors.primary}
               style={styles.modalIcon} 
             />
-            <Text style={styles.modalTitle}>Añadir Nueva Actividad</Text>
+            <Text style={styles.modalTitle}>{t('modals.activity.title')}</Text>
           </View>
           
-          <Text style={styles.modalLabel}>Nombre</Text>
+          <Text style={styles.modalLabel}>{t('modals.activity.name')}</Text>
           <TextInput
             style={styles.modalInput}
             value={newActivity.name}
@@ -51,7 +53,7 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
             placeholderTextColor={colors.textSecondary}
           />
           
-          <Text style={styles.modalLabel}>Jerarquía (1-10)</Text>
+          <Text style={styles.modalLabel}>{t('modals.activity.hierarchy')}</Text>
           <TextInput
             style={styles.modalInput}
             value={newActivity.jerar}
@@ -66,13 +68,13 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
               style={styles.modalCancelButton}
               onPress={() => setShowModal(false)}
             >
-              <Text style={styles.modalCancelButtonText}>Cancelar</Text>
+              <Text style={styles.modalCancelButtonText}>{t('modals.activity.cancel')}</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.modalConfirmButton}
               onPress={handleAddActivity}
             >
-              <Text style={styles.modalConfirmButtonText}>Añadir</Text>
+              <Text style={styles.modalConfirmButtonText}>{t('modals.activity.add')}</Text>
             </TouchableOpacity>
           </View>
         </View>

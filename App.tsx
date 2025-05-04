@@ -1,7 +1,7 @@
 // App.tsx - Actualizado para pasar updateActivity al componente Objectives
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, SafeAreaView, StatusBar, ScrollView } from 'react-native';
-
+import './i18n';
 // Tema
 import { ThemeProvider, useTheme } from './components/ThemeContext';
 

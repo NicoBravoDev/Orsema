@@ -6,6 +6,7 @@ import { AdditionalItem } from '../types/types';
 import { useTheme } from '../ThemeContext';
 import { createStyles } from './AdditionalItems.styles';
 import { ScoreCalculator } from '../../utils/ScoreCalculator'; // Importar el calculador
+import { useTranslation } from 'react-i18next'; // Importar hook de traducción
 
 interface AdditionalItemsProps {
   additionalItems: AdditionalItem[];
@@ -24,6 +25,7 @@ const AdditionalItems: React.FC<AdditionalItemsProps> = ({
 }) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const { t } = useTranslation(); // Hook para traducciones
 
   // Calculamos los ajustes cuando cambian los items adicionales
   useEffect(() => {
@@ -48,13 +50,13 @@ const AdditionalItems: React.FC<AdditionalItemsProps> = ({
   return (
     <View style={styles.card}>
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Datos Adicionales</Text>
+        <Text style={styles.sectionTitle}>{t('additionalItems.title')}</Text>
         <TouchableOpacity 
           style={styles.addButton} 
           onPress={() => setShowAdditionalItemModal(true)}
         >
           <Ionicons name="add-circle-outline" size={16} color="#FFFFFF" />
-          <Text style={styles.addButtonText}>Añadir</Text>
+          <Text style={styles.addButtonText}>{t('additionalItems.addItem')}</Text>
         </TouchableOpacity>
       </View>
       
@@ -62,16 +64,16 @@ const AdditionalItems: React.FC<AdditionalItemsProps> = ({
         <View style={styles.emptyStateContainer}>
           <Ionicons name="document-text-outline" size={48} color={colors.textSecondary} />
           <Text style={styles.emptyStateText}>
-            No hay datos adicionales registrados. Añade información complementaria para un seguimiento más completo.
+            {t('additionalItems.emptyState')}
           </Text>
         </View>
       ) : (
         <>
           {/* Encabezados de la tabla de datos adicionales */}
           <View style={styles.tableHeader}>
-            <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Acción</Text>
-            <Text style={styles.tableHeaderCell}>Cantidad</Text>
-            <Text style={styles.tableHeaderCell}>Medida</Text>
+            <Text style={[styles.tableHeaderCell, { flex: 2 }]}>{t('additionalItems.action')}</Text>
+            <Text style={styles.tableHeaderCell}>{t('additionalItems.quantity')}</Text>
+            <Text style={styles.tableHeaderCell}>{t('additionalItems.measure')}</Text>
             <Text style={{ width: 36 }}></Text>
           </View>
           
@@ -151,7 +153,7 @@ const AdditionalItems: React.FC<AdditionalItemsProps> = ({
           <View style={styles.infoContainer}>
             <FontAwesome5 name="info-circle" size={16} color={colors.primary} style={{ marginRight: 8 }} />
             <Text style={styles.infoText}>
-              Los datos de YouTube (más de 2 horas) y proteína afectan automáticamente tu puntaje total.
+              {t('additionalItems.infoMessage')}
             </Text>
           </View>
         </>
