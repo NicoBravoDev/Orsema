@@ -1,12 +1,11 @@
 // components/Header/Header.tsx
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { DateState, PointsState } from '../types/types';
 import { useTheme } from '../ThemeContext';
 import { createStyles } from './Header.styles';
-import { useTranslation } from 'react-i18next'; // Importar hook de traducción
-import LanguageSelector from '../LanguageSelector/LanguageSelector'; // Importar el selector de idioma
+import { useTranslation } from 'react-i18next';
 
 interface HeaderProps {
   date: DateState;
@@ -25,9 +24,9 @@ const Header: React.FC<HeaderProps> = ({
   saveToFirebase,
   resetData,
 }) => {
-  const { isDarkMode, toggleTheme, colors } = useTheme();
+  const { colors } = useTheme();
   const styles = createStyles(colors);
-  const { t } = useTranslation(); // Hook para traducciones
+  const { t } = useTranslation();
 
   const setToday = () => {
     const today = new Date();
@@ -40,67 +39,6 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      {/* Encabezado */}
-      <View style={styles.header}>
-        <View style={styles.topRow}>
-          <Text style={styles.title}>{t('header.appTitle')}</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {/* Selector de idioma compacto */}
-            <LanguageSelector 
-              compact={true}
-              isDarkMode={isDarkMode}
-              primaryColor={colors.primary}
-              textColor="#FFFFFF"
-            />
-            
-            {/* Espacio entre los controles */}
-            <View style={{ width: 8 }} />
-            
-            {/* Selector de tema */}
-            <View style={styles.themeSwitchContainer}>
-              <Ionicons 
-                name={isDarkMode ? "moon" : "sunny"} 
-                size={22} 
-                color={colors.text} 
-                style={styles.themeIcon} 
-              />
-              <Switch
-                value={isDarkMode}
-                onValueChange={toggleTheme}
-                trackColor={{ false: '#D1D5DB', true: `${colors.primary}80` }}
-                thumbColor={isDarkMode ? colors.primary : '#FFFFFF'}
-              />
-            </View>
-          </View>
-        </View>
-        
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-          <View style={styles.premiumBadge}>
-            <Text style={styles.premiumBadgeText}>{t('header.premiumBadge')}</Text>
-          </View>
-          <Text style={styles.subtitle}>
-            {t('header.appSubtitle')}
-          </Text>
-        </View>
-        
-        <View style={styles.buttonRow}>
-          <TouchableOpacity 
-            style={styles.buttonPrimary} 
-            onPress={saveToFirebase}
-          >
-            <Ionicons name="save-outline" size={18} color="#FFFFFF" style={styles.buttonIcon} />
-            <Text style={styles.buttonText}>{t('header.save')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.buttonSecondary} 
-            onPress={resetData}
-          >
-            <Ionicons name="refresh-outline" size={18} color="#FFFFFF" style={styles.buttonIcon} />
-            <Text style={styles.buttonText}>{t('header.reset')}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      
       {/* Fecha y puntos */}
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>{t('header.dateAndPoints')}</Text>
@@ -186,6 +124,25 @@ const Header: React.FC<HeaderProps> = ({
               placeholderTextColor={colors.textSecondary}
             />
           </View>
+        </View>
+        
+        {/* Botones de acción */}
+        <View style={styles.buttonRow}>
+          <TouchableOpacity 
+            style={styles.buttonPrimary} 
+            onPress={saveToFirebase}
+          >
+            <Ionicons name="save-outline" size={18} color="#FFFFFF" style={styles.buttonIcon} />
+            <Text style={styles.buttonText}>{t('header.save')}</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.buttonSecondary} 
+            onPress={resetData}
+          >
+            <Ionicons name="refresh-outline" size={18} color="#FFFFFF" style={styles.buttonIcon} />
+            <Text style={styles.buttonText}>{t('header.reset')}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </>

@@ -102,4 +102,22 @@ export default {
       hours: "Hours",
       minutes: "Minutes",
     },
+    tabBar: {
+        home: "Home",
+        stats: "Statistics",
+        calendar: "Calendar",
+        settings: "Settings"
+      },
+      settings: {
+        title: "Settings",
+        appearance: "Appearance",
+        darkMode: "Dark Mode",
+        language: "Language",
+        selectLanguage: "Select a language",
+        about: "About",
+        aboutApp: "About ORSEMA",
+        help: "Help & Support",
+        version: "Version",
+      },
+      
   };

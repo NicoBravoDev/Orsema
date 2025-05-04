@@ -1,7 +1,11 @@
-// App.tsx - Actualizado para pasar updateActivity al componente Objectives
+// App.tsx - Actualizado con UserHeader y navegación modificada
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, SafeAreaView, StatusBar, ScrollView } from 'react-native';
+import { StyleSheet, SafeAreaView, StatusBar, ScrollView, View, Platform } from 'react-native';
+
+// Importar configuración i18n
 import './i18n';
+import { useTranslation } from 'react-i18next';
+
 // Tema
 import { ThemeProvider, useTheme } from './components/ThemeContext';
 
@@ -10,6 +14,9 @@ import Header from './components/Header/Header';
 import Activities from './components/Activities/Activities';
 import AdditionalItems from './components/AdditionalItems/AdditionalItems';
 import Objectives from './components/Objectives/Objectives';
+import TabBar, { TabName } from './components/TabBar/TabBar';
+import UserHeader from './components/UserHeader/UserHeader';
+import Settings from './components/Settings/Settings';
 
 // Modales
 import ActivityModal from './components/Modals/ActivityModal';
@@ -33,6 +40,10 @@ import {
 
 const AppContent = () => {
   const { isDarkMode, colors } = useTheme();
+  const { t } = useTranslation();
+  
+  // Estado para la navegación de pestañas
+  const [activeTab, setActiveTab] = useState<TabName>('home');
   
   // Estados básicos
   const [date, setDate] = useState<DateState>({ day: 18, month: 10, year: 24 });
@@ -45,7 +56,7 @@ const AppContent = () => {
   
   // Estados para nuevos elementos
   const [newActivity, setNewActivity] = useState<NewActivityState>({ name: '', jerar: '1' });
-  const [newAdditionalItem, setNewAdditionalItem] = useState<NewAdditionalItemState>({ action: '', med: 'Unidades' });
+  const [newAdditionalItem, setNewAdditionalItem] = useState<NewAdditionalItemState>({ action: '', med: t('measures.units') });
   const [newObjective, setNewObjective] = useState<NewObjectiveState>({ text: '', activityId: '' });
   
   // Estado de actividades
@@ -69,6 +80,17 @@ const AppContent = () => {
 
   // Estado para ajustes de puntos por elementos adicionales
   const [additionalAdjustments, setAdditionalAdjustments] = useState<number>(0);
+
+  // Datos del usuario
+  const [userData] = useState({
+    username: "Nicolas Bravo",
+    email: "nicolas.pulgar.bravo@gmail.com"
+  });
+
+  // Actualizar newAdditionalItem.med cuando cambia el idioma
+  useEffect(() => {
+    setNewAdditionalItem(prev => ({ ...prev, med: t('measures.units') }));
+  }, [t]);
 
   // Efecto para recalcular el puntaje total cuando cambian las actividades o los ajustes adicionales
   useEffect(() => {
@@ -94,7 +116,7 @@ const AppContent = () => {
   // Funciones para ventanas modales
   const handleAddActivity = () => {
     if (newActivity.name.trim() === '') {
-      alert('El nombre de la actividad no puede estar vacío');
+      alert(t('alerts.emptyActivityName'));
       return;
     }
     
@@ -116,7 +138,7 @@ const AppContent = () => {
   
   const handleAddAdditionalItem = () => {
     if (newAdditionalItem.action.trim() === '') {
-      alert('El nombre de la acción no puede estar vacío');
+      alert(t('alerts.emptyActionName'));
       return;
     }
     
@@ -128,13 +150,13 @@ const AppContent = () => {
       med: newAdditionalItem.med
     }]);
     
-    setNewAdditionalItem({ action: '', med: 'Unidades' });
+    setNewAdditionalItem({ action: '', med: t('measures.units') });
     setShowAdditionalItemModal(false);
   };
   
   const handleAddObjective = () => {
     if (newObjective.text.trim() === '') {
-      alert('El texto del objetivo no puede estar vacío');
+      alert(t('alerts.emptyObjectiveText'));
       return;
     }
     
@@ -279,7 +301,7 @@ const AppContent = () => {
       additionalItems 
     });
     
-    alert("Datos guardados correctamente (simulación). Se han actualizado los factores X.");
+    alert(t('alerts.dataSaved'));
   };
   
   const resetData = () => {
@@ -295,56 +317,100 @@ const AppContent = () => {
     // Reset objetivos
     setObjectives(objectives.map(obj => ({ ...obj, completed: false })));
     
-    alert("Datos limpiados para un nuevo día");
+    alert(t('alerts.dataReset'));
+  };
+
+  // Renderizado condicional basado en la pestaña activa
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'home':
+        return (
+          <>
+            {/* Componente Header */}
+            <Header 
+              date={date} 
+              points={points} 
+              setDate={setDate} 
+              setPoints={setPoints} 
+              saveToFirebase={saveToFirebase} 
+              resetData={resetData} 
+            />
+            
+            {/* Componente Activities */}
+            <Activities 
+              activities={activities} 
+              objectives={objectives} 
+              updateActivity={updateActivity} 
+              setActivities={setActivities}
+              removeActivity={removeActivity} 
+              toggleObjective={toggleObjective} 
+              setShowActivityModal={setShowActivityModal} 
+            />
+            
+            {/* Componente AdditionalItems */}
+            <AdditionalItems 
+              additionalItems={additionalItems} 
+              updateAdditionalItem={updateAdditionalItem} 
+              removeAdditionalItem={removeAdditionalItem} 
+              setShowAdditionalItemModal={setShowAdditionalItemModal} 
+              updateTotalPoints={updateAdditionalAdjustments}
+            />
+            
+            {/* Componente Objectives */}
+            <Objectives 
+              objectives={objectives} 
+              activities={activities} 
+              toggleObjective={toggleObjective} 
+              updateObjectiveText={updateObjectiveText} 
+              removeObjective={removeObjective} 
+              setObjectiveActivity={setObjectiveActivity} 
+              setShowObjectiveModal={setShowObjectiveModal} 
+              setActivities={setActivities}
+              updateActivity={updateActivity}
+            />
+          </>
+        );
+      case 'stats':
+        // Reemplazar con el componente de estadísticas cuando lo tengas
+        return (
+          <View style={styles.placeholderContainer}>
+            {/* Aquí irá tu componente de estadísticas */}
+          </View>
+        );
+      case 'calendar':
+        // Reemplazar con el componente de calendario cuando lo tengas
+        return (
+          <View style={styles.placeholderContainer}>
+            {/* Aquí irá tu componente de calendario */}
+          </View>
+        );
+      case 'settings':
+        // Ahora usamos el componente Settings real
+        return <Settings />;
+      default:
+        return null;
+    }
   };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} backgroundColor={colors.background} />
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Componente Header */}
-        <Header 
-          date={date} 
-          points={points} 
-          setDate={setDate} 
-          setPoints={setPoints} 
-          saveToFirebase={saveToFirebase} 
-          resetData={resetData} 
-        />
-        
-        {/* Componente Activities */}
-        <Activities 
-          activities={activities} 
-          objectives={objectives} 
-          updateActivity={updateActivity} 
-          setActivities={setActivities} // Pasar función para actualizar todas las actividades
-          removeActivity={removeActivity} 
-          toggleObjective={toggleObjective} 
-          setShowActivityModal={setShowActivityModal} 
-        />
-        
-        {/* Componente AdditionalItems */}
-        <AdditionalItems 
-          additionalItems={additionalItems} 
-          updateAdditionalItem={updateAdditionalItem} 
-          removeAdditionalItem={removeAdditionalItem} 
-          setShowAdditionalItemModal={setShowAdditionalItemModal} 
-          updateTotalPoints={updateAdditionalAdjustments} // Para gestionar ajustes de puntos
-        />
-        
-        {/* Componente Objectives - Ahora con updateActivity */}
-        <Objectives 
-          objectives={objectives} 
-          activities={activities} 
-          toggleObjective={toggleObjective} 
-          updateObjectiveText={updateObjectiveText} 
-          removeObjective={removeObjective} 
-          setObjectiveActivity={setObjectiveActivity} 
-          setShowObjectiveModal={setShowObjectiveModal} 
-          setActivities={setActivities} // Para actualizar actividades cuando cambian objetivos
-          updateActivity={updateActivity} // Nueva prop para marcar actividades automáticamente
-        />
+      
+      {/* Header de usuario fijo */}
+      <UserHeader username={userData.username} email={userData.email} />
+      
+      {/* Contenido principal con margen para el header */}
+      <ScrollView 
+        contentContainerStyle={[
+          styles.scrollContainer, 
+          { paddingTop: 76 } // Altura del header + padding
+        ]}
+      >
+        {renderTabContent()}
       </ScrollView>
+      
+      {/* Barra de navegación inferior */}
+      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
       
       {/* Modales */}
       <ActivityModal 
@@ -390,6 +456,13 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     padding: 16,
+    paddingBottom: 80, // Espacio adicional para la barra de navegación
+  },
+  placeholderContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    minHeight: 300,
   },
 });
 
